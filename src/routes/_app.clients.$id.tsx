@@ -80,8 +80,8 @@ function ClientDetail() {
   }, [totalHours, client]);
 
   const updateClient = useMutation({
-    mutationFn: async (patch: Record<string, unknown>) => {
-      const { error } = await supabase.from("clients").update(patch).eq("id", id);
+    mutationFn: async (patch: Partial<{ process_status: string; characterization_text: string; miro_link: string; characterization_hours_estimate: number; free_notes: string; last_10h_threshold: number }>) => {
+      const { error } = await supabase.from("clients").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client", id] }),
@@ -104,7 +104,7 @@ function ClientDetail() {
   const save10h = async () => {
     if (!tenHourText.trim()) return toast.error("נדרש סיכום");
     const { error } = await supabase.from("client_documents").insert({
-      client_id: id, user_id: user!.id, doc_type: "ten_hour_summary",
+      client_id: id, user_id: user!.id, doc_type: "ten_hours",
       title: `סיכום ${Math.floor(totalHours / 10) * 10} שעות`, content: tenHourText,
     });
     if (error) return toast.error(error.message);
@@ -275,7 +275,7 @@ function DocsTab({ clientId, docs, userId }: { clientId: string; docs: Array<{ i
         <Card key={d.id} className="p-4">
           <div className="flex items-center justify-between mb-1">
             <div className="font-semibold">{d.title || "ללא כותרת"}</div>
-            <div className="text-xs text-muted-foreground">{new Date(d.created_at).toLocaleDateString("he-IL")} {d.doc_type === "ten_hour_summary" && <Badge className="mr-2">סיכום 10 שעות</Badge>}</div>
+            <div className="text-xs text-muted-foreground">{new Date(d.created_at).toLocaleDateString("he-IL")} {d.doc_type === "ten_hours" && <Badge className="mr-2">סיכום 10 שעות</Badge>}</div>
           </div>
           <div className="text-sm whitespace-pre-wrap">{d.content}</div>
         </Card>
