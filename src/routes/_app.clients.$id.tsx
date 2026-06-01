@@ -238,7 +238,7 @@ function CharacterizationTab({ client, onChange }: { client: { id: string; chara
           </div>
         </div>
         <div>
-          <Label>הערכת שעות (10 שעות)</Label>
+          <Label>הערכת שעות \</Label>
           <Input type="number" value={est} onChange={e => setEst(e.target.value)} />
         </div>
       </div>
